@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>청소당번 뽑기</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(80, 100, 200, 0.12);
+            padding: 2.5rem 2rem;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #2d3a8c;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8892b0;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .name-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .name-section label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .name-section textarea {
+            width: 100%;
+            height: 90px;
+            border: 1.5px solid #c3cfe2;
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            font-size: 0.92rem;
+            color: #2d3a8c;
+            resize: none;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .name-section textarea:focus {
+            border-color: #5c6bc0;
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .student-card {
+            background: #f5f7ff;
+            border: 1.5px solid #e0e6ff;
+            border-radius: 10px;
+            padding: 0.55rem 0.3rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.35s cubic-bezier(.4, 0, .2, 1);
+            cursor: default;
+            user-select: none;
+        }
+
+        .student-card .num {
+            display: block;
+            font-size: 0.7rem;
+            color: #a0aec0;
+            margin-bottom: 2px;
+        }
+
+        .student-card.selected {
+            background: #2d3a8c;
+            border-color: #2d3a8c;
+            color: #fff;
+            transform: scale(1.07);
+            box-shadow: 0 4px 16px rgba(45, 58, 140, 0.25);
+        }
+
+        .student-card.selected .num {
+            color: #aab4e8;
+        }
+
+        .student-card.bounce {
+            animation: bounce 0.45s ease;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: scale(1.07);
+            }
+
+            30% {
+                transform: scale(1.18) rotate(-3deg);
+            }
+
+            60% {
+                transform: scale(1.04) rotate(2deg);
+            }
+
+            100% {
+                transform: scale(1.07) rotate(0deg);
+            }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.65rem 1.7rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .btn-primary {
+            background: #2d3a8c;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #3949ab;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset {
+            background: #f0f4ff;
+            color: #2d3a8c;
+            border: 1.5px solid #c3cfe2;
+        }
+
+        .btn-reset:hover {
+            background: #e0e6ff;
+        }
+
+        .result-section {
+            background: #f5f7ff;
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            border: 1.5px solid #e0e6ff;
+            min-height: 70px;
+        }
+
+        .result-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #8892b0;
+            margin-bottom: 0.7rem;
+        }
+
+        .result-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            background: #2d3a8c;
+            color: #fff;
+            border-radius: 999px;
+            padding: 0.35rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: fadeUp 0.4s forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-empty {
+            color: #b0bec5;
+            font-size: 0.9rem;
+        }
+
+        .count-badge {
+            display: inline-block;
+            background: #e8eaf6;
+            color: #3949ab;
+            border-radius: 6px;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧹 청소당번 뽑기</h1>
+        <p class="subtitle">25명 중 5명을 무작위로 선정합니다</p>
+
+        <div class="name-section">
+            <label>학생 이름 목록 <span style="font-weight:400;color:#a0aec0;">(쉼표 또는 줄바꿈으로 구분, 25명)</span></label>
+            <textarea id="nameInput" placeholder="예) 김민준, 이서연, 박지호 ..."></textarea>
+        </div>
+
+        <div class="students-grid" id="studentsGrid"></div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" id="pickBtn" onclick="pickStudents()">🎲 뽑기 시작</button>
+            <button class="btn btn-reset" onclick="resetAll()">↩ 초기화</button>
+        </div>
+
+        <div class="result-section">
+            <div class="result-title">오늘의 청소당번 <span class="count-badge" id="countBadge">0 / 5</span></div>
+            <div class="result-chips" id="resultChips">
+                <span class="result-empty">버튼을 눌러 청소당번을 뽑아보세요!</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_NAMES = [
+            "김민준", "이서연", "박지호", "최유진", "정하은",
+            "강도현", "윤서아", "임재원", "한소희", "오민석",
+            "신지우", "백예린", "류성민", "황채원", "조현우",
+            "문지아", "전민혁", "양수빈", "홍준서", "남다은",
+            "심우진", "노아영", "구태현", "서지민", "안소율"
+        ];
+
+        let names = [...DEFAULT_NAMES];
+        let picked = [];
+        let animating = false;
+
+        const nameInput = document.getElementById('nameInput');
+        const grid = document.getElementById('studentsGrid');
+        const chips = document.getElementById('resultChips');
+        const badge = document.getElementById('countBadge');
+
+        nameInput.value = DEFAULT_NAMES.join(', ');
+
+        // 이름 입력 시 실시간 반영
+        nameInput.addEventListener('input', () => {
+            const raw = nameInput.value.split(/[,\n]+/).map(n => n.trim()).filter(Boolean);
+            names = raw.slice(0, 25);
+            renderGrid();
+            clearResult();
+        });
+
+        function renderGrid() {
+            grid.innerHTML = '';
+            const display = names.length > 0 ? names : DEFAULT_NAMES;
+            for (let i = 0; i < 25; i++) {
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                card.id = `card-${i}`;
+                card.innerHTML = `<span class="num">${i + 1}번</span>${display[i] || ''}`;
+                grid.appendChild(card);
+            }
+        }
+
+        function clearResult() {
+            picked = [];
+            chips.innerHTML = '<span class="result-empty">버튼을 눌러 청소당번을 뽑아보세요!</span>';
+            badge.textContent = '0 / 5';
+            document.querySelectorAll('.student-card').forEach(c => c.classList.remove('selected', 'bounce'));
+        }
+
+        function pickStudents() {
+            if (animating) return;
+            const src = names.length >= 25 ? names : DEFAULT_NAMES;
+
+            clearResult();
+            animating = true;
+
+            // 중복 없이 5명 랜덤 선택
+            const indices = [];
+            while (indices.length < 5) {
+                const r = Math.floor(Math.random() * 25);
+                if (!indices.includes(r)) indices.push(r);
+            }
+
+            // 0.35초 간격으로 한 명씩 애니메이션
+            indices.forEach((idx, order) => {
+                setTimeout(() => {
+                    const card = document.getElementById(`card-${idx}`);
+                    if (card) {
+                        card.classList.add('selected', 'bounce');
+                        card.addEventListener('animationend', () => card.classList.remove('bounce'), { once: true });
+                    }
+                    picked.push(src[idx]);
+                    badge.textContent = `${picked.length} / 5`;
+
+                    const chip = document.createElement('span');
+                    chip.className = 'chip';
+                    chip.style.animationDelay = `${order * 0.08}s`;
+                    chip.textContent = src[idx];
+
+                    if (order === 0) chips.innerHTML = '';
+                    chips.appendChild(chip);
+
+                    if (order === 4) animating = false;
+                }, order * 350);
+            });
+        }
+
+        function resetAll() {
+            nameInput.value = DEFAULT_NAMES.join(', ');
+            names = [...DEFAULT_NAMES];
+            renderGrid();
+            clearResult();
+            animating = false;
+        }
+
+        renderGrid();
+    </script>
+</body>
+
+</html>
