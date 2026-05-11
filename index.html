@@ -1,263 +1,337 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>청소당번 뽑기</title>
+    <title>대서초 청소당번 뽑기</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #e0e7ff 100%);
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
 
         body {
-            font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-            background: #f0f4ff;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1.5rem;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Elements */
+        .bg-blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(60px);
+            animation: move 20s infinite alternate;
+        }
+        .blob-1 { top: -100px; left: -100px; }
+        .blob-2 { bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, rgba(255, 255, 255, 0) 70%); }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
         }
 
         .container {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 8px 40px rgba(80, 100, 200, 0.12);
-            padding: 2.5rem 2rem;
-            max-width: 700px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2.5rem;
+            max-width: 800px;
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
         }
 
         h1 {
-            text-align: center;
-            font-size: 1.7rem;
-            font-weight: 700;
-            color: #2d3a8c;
-            margin-bottom: 0.3rem;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
-            text-align: center;
-            color: #8892b0;
-            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .input-group {
             margin-bottom: 2rem;
         }
 
-        .name-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .name-section label {
+        .input-group label {
             display: block;
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
         }
 
-        .name-section textarea {
+        textarea {
             width: 100%;
-            height: 90px;
-            border: 1.5px solid #c3cfe2;
-            border-radius: 10px;
-            padding: 0.7rem 1rem;
-            font-size: 0.92rem;
-            color: #2d3a8c;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
             resize: none;
             outline: none;
-            transition: border 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .name-section textarea:focus {
-            border-color: #5c6bc0;
+        textarea:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         .students-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 2.5rem;
         }
 
         .student-card {
-            background: #f5f7ff;
-            border: 1.5px solid #e0e6ff;
-            border-radius: 10px;
-            padding: 0.55rem 0.3rem;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem 0.5rem;
             text-align: center;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #4a5568;
-            transition: all 0.35s cubic-bezier(.4, 0, .2, 1);
+            font-weight: 600;
+            color: var(--text-main);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
             cursor: default;
-            user-select: none;
         }
 
         .student-card .num {
             display: block;
-            font-size: 0.7rem;
-            color: #a0aec0;
-            margin-bottom: 2px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 400;
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+            background: #fff;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
+        }
+
+        .student-card.shuffling {
+            background: white;
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         }
 
         .student-card.selected {
-            background: #2d3a8c;
-            border-color: #2d3a8c;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-color: transparent;
             color: #fff;
-            transform: scale(1.07);
-            box-shadow: 0 4px 16px rgba(45, 58, 140, 0.25);
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 12px 24px -8px rgba(79, 70, 229, 0.5);
         }
 
         .student-card.selected .num {
-            color: #aab4e8;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .student-card.bounce {
-            animation: bounce 0.45s ease;
+            animation: cardBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes bounce {
-            0% {
-                transform: scale(1.07);
-            }
-
-            30% {
-                transform: scale(1.18) rotate(-3deg);
-            }
-
-            60% {
-                transform: scale(1.04) rotate(2deg);
-            }
-
-            100% {
-                transform: scale(1.07) rotate(0deg);
-            }
+        @keyframes cardBounce {
+            0%, 100% { transform: scale(1.1); }
+            50% { transform: scale(1.25) rotate(3deg); }
         }
 
-        .btn-row {
+        .actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
         }
 
         .btn {
-            padding: 0.65rem 1.7rem;
+            padding: 1rem 2rem;
             border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.18s;
-        }
-
-        .btn-primary {
-            background: #2d3a8c;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #3949ab;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-reset {
-            background: #f0f4ff;
-            color: #2d3a8c;
-            border: 1.5px solid #c3cfe2;
-        }
-
-        .btn-reset:hover {
-            background: #e0e6ff;
-        }
-
-        .result-section {
-            background: #f5f7ff;
-            border-radius: 14px;
-            padding: 1.2rem 1.5rem;
-            border: 1.5px solid #e0e6ff;
-            min-height: 70px;
-        }
-
-        .result-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #8892b0;
-            margin-bottom: 0.7rem;
-        }
-
-        .result-chips {
+            transition: all 0.3s;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 8px;
         }
 
-        .chip {
-            background: #2d3a8c;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: #fff;
-            border-radius: 999px;
-            padding: 0.35rem 1rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            opacity: 0;
-            transform: translateY(8px);
-            animation: fadeUp 0.4s forwards;
+            box-shadow: 0 8px 20px -6px rgba(79, 70, 229, 0.4);
         }
 
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -8px rgba(79, 70, 229, 0.5);
         }
 
-        .result-empty {
-            color: #b0bec5;
-            font-size: 0.9rem;
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-reset {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
         }
 
-        .count-badge {
-            display: inline-block;
-            background: #e8eaf6;
-            color: #3949ab;
-            border-radius: 6px;
-            padding: 0.1rem 0.5rem;
-            font-size: 0.78rem;
+        .btn-reset:hover {
+            background: #fff;
+            color: var(--secondary);
+        }
+
+        .result-panel {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .result-header h3 {
+            font-size: 1rem;
             font-weight: 700;
-            margin-left: 0.4rem;
-            vertical-align: middle;
+            color: var(--text-main);
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 48px;
+            align-items: center;
+        }
+
+        .winner-chip {
+            background: white;
+            color: var(--primary-dark);
+            padding: 8px 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--glass-border);
+            animation: chipAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        @keyframes chipAppear {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .empty-msg {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 2rem 1.5rem; }
+            h1 { font-size: 1.75rem; }
+            .students-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>🧹 청소당번 뽑기</h1>
-        <p class="subtitle">25명 중 5명을 무작위로 선정합니다</p>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
 
-        <div class="name-section">
-            <label>학생 이름 목록 <span style="font-weight:400;color:#a0aec0;">(쉼표 또는 줄바꿈으로 구분, 25명)</span></label>
-            <textarea id="nameInput" placeholder="예) 김민준, 이서연, 박지호 ..."></textarea>
+    <div class="container">
+        <header>
+            <h1>🧹 대서초 청소당번 뽑기</h1>
+            <p class="subtitle">모두가 즐거운 교실 만들기!</p>
+        </header>
+
+        <div class="input-group">
+            <label>학생 명단 <span style="font-weight: 400; opacity: 0.6;">(쉼표 또는 줄바꿈으로 구분)</span></label>
+            <textarea id="nameInput" placeholder="이름들을 입력해주세요..."></textarea>
         </div>
 
         <div class="students-grid" id="studentsGrid"></div>
 
-        <div class="btn-row">
-            <button class="btn btn-primary" id="pickBtn" onclick="pickStudents()">🎲 뽑기 시작</button>
-            <button class="btn btn-reset" onclick="resetAll()">↩ 초기화</button>
+        <div class="actions">
+            <button class="btn btn-primary" id="pickBtn" onclick="pickStudents()">
+                <span>🎲</span> 당번 뽑기 시작
+            </button>
+            <button class="btn btn-reset" onclick="resetAll()">
+                <span>↩</span> 초기화
+            </button>
         </div>
 
-        <div class="result-section">
-            <div class="result-title">오늘의 청소당번 <span class="count-badge" id="countBadge">0 / 5</span></div>
-            <div class="result-chips" id="resultChips">
-                <span class="result-empty">버튼을 눌러 청소당번을 뽑아보세요!</span>
+        <div class="result-panel">
+            <div class="result-header">
+                <h3>🏆 선정된 청소 요정</h3>
+                <span class="badge" id="countBadge">0 / 5</span>
+            </div>
+            <div class="chips" id="resultChips">
+                <span class="empty-msg">아직 선정된 학생이 없습니다.</span>
             </div>
         </div>
     </div>
@@ -272,8 +346,8 @@
         ];
 
         let names = [...DEFAULT_NAMES];
-        let picked = [];
-        let animating = false;
+        let pickedIndices = [];
+        let isAnimating = false;
 
         const nameInput = document.getElementById('nameInput');
         const grid = document.getElementById('studentsGrid');
@@ -282,81 +356,96 @@
 
         nameInput.value = DEFAULT_NAMES.join(', ');
 
-        // 이름 입력 시 실시간 반영
+        function getNamesFromInput() {
+            return nameInput.value.split(/[,\n]+/).map(n => n.trim()).filter(Boolean);
+        }
+
         nameInput.addEventListener('input', () => {
-            const raw = nameInput.value.split(/[,\n]+/).map(n => n.trim()).filter(Boolean);
-            names = raw.slice(0, 25);
+            names = getNamesFromInput();
             renderGrid();
-            clearResult();
+            clearSelection();
         });
 
         function renderGrid() {
             grid.innerHTML = '';
-            const display = names.length > 0 ? names : DEFAULT_NAMES;
-            for (let i = 0; i < 25; i++) {
+            const count = Math.max(names.length, 25);
+            for (let i = 0; i < count; i++) {
                 const card = document.createElement('div');
                 card.className = 'student-card';
                 card.id = `card-${i}`;
-                card.innerHTML = `<span class="num">${i + 1}번</span>${display[i] || ''}`;
+                card.innerHTML = `<span class="num">${i + 1}번</span>${names[i] || '공석'}`;
                 grid.appendChild(card);
             }
         }
 
-        function clearResult() {
-            picked = [];
-            chips.innerHTML = '<span class="result-empty">버튼을 눌러 청소당번을 뽑아보세요!</span>';
+        function clearSelection() {
+            pickedIndices = [];
+            chips.innerHTML = '<span class="empty-msg">아직 선정된 학생이 없습니다.</span>';
             badge.textContent = '0 / 5';
-            document.querySelectorAll('.student-card').forEach(c => c.classList.remove('selected', 'bounce'));
-        }
-
-        function pickStudents() {
-            if (animating) return;
-            const src = names.length >= 25 ? names : DEFAULT_NAMES;
-
-            clearResult();
-            animating = true;
-
-            // 중복 없이 5명 랜덤 선택
-            const indices = [];
-            while (indices.length < 5) {
-                const r = Math.floor(Math.random() * 25);
-                if (!indices.includes(r)) indices.push(r);
-            }
-
-            // 0.35초 간격으로 한 명씩 애니메이션
-            indices.forEach((idx, order) => {
-                setTimeout(() => {
-                    const card = document.getElementById(`card-${idx}`);
-                    if (card) {
-                        card.classList.add('selected', 'bounce');
-                        card.addEventListener('animationend', () => card.classList.remove('bounce'), { once: true });
-                    }
-                    picked.push(src[idx]);
-                    badge.textContent = `${picked.length} / 5`;
-
-                    const chip = document.createElement('span');
-                    chip.className = 'chip';
-                    chip.style.animationDelay = `${order * 0.08}s`;
-                    chip.textContent = src[idx];
-
-                    if (order === 0) chips.innerHTML = '';
-                    chips.appendChild(chip);
-
-                    if (order === 4) animating = false;
-                }, order * 350);
+            document.querySelectorAll('.student-card').forEach(c => {
+                c.classList.remove('selected', 'bounce', 'shuffling');
             });
         }
 
+        async function pickStudents() {
+            if (isAnimating || names.length === 0) return;
+            
+            clearSelection();
+            isAnimating = true;
+            const pickBtn = document.getElementById('pickBtn');
+            pickBtn.disabled = true;
+            pickBtn.style.opacity = '0.5';
+
+            // Shuffling effect
+            for (let i = 0; i < 20; i++) {
+                const randomIdx = Math.floor(Math.random() * names.length);
+                const card = document.getElementById(`card-${randomIdx}`);
+                if (card) {
+                    card.classList.add('shuffling');
+                    await new Promise(r => setTimeout(r, 60));
+                    card.classList.remove('shuffling');
+                }
+            }
+
+            const indices = [];
+            while (indices.length < Math.min(5, names.length)) {
+                const r = Math.floor(Math.random() * names.length);
+                if (!indices.includes(r)) indices.push(r);
+            }
+
+            for (let i = 0; i < indices.length; i++) {
+                const idx = indices[i];
+                await new Promise(r => setTimeout(r, 400));
+                
+                const card = document.getElementById(`card-${idx}`);
+                if (card) {
+                    card.classList.add('selected', 'bounce');
+                }
+
+                if (i === 0) chips.innerHTML = '';
+                
+                const chip = document.createElement('div');
+                chip.className = 'winner-chip';
+                chip.textContent = names[idx];
+                chips.appendChild(chip);
+                
+                badge.textContent = `${i + 1} / 5`;
+            }
+
+            isAnimating = false;
+            pickBtn.disabled = false;
+            pickBtn.style.opacity = '1';
+        }
+
         function resetAll() {
+            if (isAnimating) return;
             nameInput.value = DEFAULT_NAMES.join(', ');
             names = [...DEFAULT_NAMES];
             renderGrid();
-            clearResult();
-            animating = false;
+            clearSelection();
         }
 
         renderGrid();
     </script>
 </body>
-
 </html>
